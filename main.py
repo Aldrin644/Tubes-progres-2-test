@@ -74,6 +74,10 @@ elif page == "Training Model":
     knn_regressor = KNeighborsRegressor(n_neighbors=best_k)
     knn_regressor.fit(X_train, y_train)
 
+    # Menyimpan model di session state untuk digunakan di halaman lain
+    st.session_state.knn_model = knn_regressor
+    st.session_state.scaler = scaler
+
     # Memprediksi data uji
     y_pred = knn_regressor.predict(X_test)
 
@@ -87,25 +91,32 @@ elif page == "Training Model":
 elif page == "Prediksi Waktu Layar":
     st.title("Hitung Prediksi Waktu Layar Smartphone ✏️")
 
-    col1, col2 = st.columns(2)
-    with col1:
-        social_media_usage = st.number_input("Masukkan Jam Penggunaan Media Sosial", 0, 24, 2)
-        productivity_usage = st.number_input("Masukkan Jam Penggunaan Aplikasi Produktivitas", 0, 24, 3)
-        gaming_usage = st.number_input("Masukkan Jam Penggunaan Aplikasi Gaming", 0, 24, 1)
-        total_usage = st.number_input("Masukkan Total Jam Penggunaan Aplikasi", 0, 24, 6)
-    
-    # Menampilkan faktor-faktor yang mempengaruhi
-    with col2:
-        st.write("Faktor yang mungkin mempengaruhi:")
-        st.write("Jika waktu penggunaan media sosial lebih banyak, waktu layar bisa lebih tinggi.")
-        st.write("Jika waktu penggunaan aplikasi produktivitas lebih banyak, waktu layar bisa lebih rendah.")
-        st.write("Jika waktu penggunaan aplikasi gaming lebih banyak, waktu layar bisa lebih tinggi.")
-        st.write("Jika total waktu penggunaan aplikasi lebih banyak, waktu layar bisa lebih tinggi.")
-    
-    hitung = st.button("Prediksi Sekarang")
-    if hitung:
-        data_baru = pd.DataFrame([[social_media_usage, productivity_usage, gaming_usage, total_usage]], 
-                                 columns=['Social_Media_Usage_Hours', 'Productivity_App_Usage_Hours', 'Gaming_App_Usage_Hours', 'Total_App_Usage_Hours'])
-        scaled_data_baru = scaler.transform(data_baru)
-        prediksi = knn_regressor.predict(scaled_data_baru)
-        st.success(f"Waktu layar diprediksi: {prediksi[0]:.2f} jam")
+    # Memastikan model dan scaler sudah tersedia
+    if 'knn_model' not in st.session_state:
+        st.error("Model belum dilatih. Silakan latih model terlebih dahulu.")
+    else:
+        knn_regressor = st.session_state.knn_model
+        scaler = st.session_state.scaler
+
+        col1, col2 = st.columns(2)
+        with col1:
+            social_media_usage = st.number_input("Masukkan Jam Penggunaan Media Sosial", 0, 24, 2)
+            productivity_usage = st.number_input("Masukkan Jam Penggunaan Aplikasi Produktivitas", 0, 24, 3)
+            gaming_usage = st.number_input("Masukkan Jam Penggunaan Aplikasi Gaming", 0, 24, 1)
+            total_usage = st.number_input("Masukkan Total Jam Penggunaan Aplikasi", 0, 24, 6)
+        
+        # Menampilkan faktor-faktor yang mempengaruhi
+        with col2:
+            st.write("Faktor yang mungkin mempengaruhi:")
+            st.write("Jika waktu penggunaan media sosial lebih banyak, waktu layar bisa lebih tinggi.")
+            st.write("Jika waktu penggunaan aplikasi produktivitas lebih banyak, waktu layar bisa lebih rendah.")
+            st.write("Jika waktu penggunaan aplikasi gaming lebih banyak, waktu layar bisa lebih tinggi.")
+            st.write("Jika total waktu penggunaan aplikasi lebih banyak, waktu layar bisa lebih tinggi.")
+        
+        hitung = st.button("Prediksi Sekarang")
+        if hitung:
+            data_baru = pd.DataFrame([[social_media_usage, productivity_usage, gaming_usage, total_usage]], 
+                                     columns=['Social_Media_Usage_Hours', 'Productivity_App_Usage_Hours', 'Gaming_App_Usage_Hours', 'Total_App_Usage_Hours'])
+            scaled_data_baru = scaler.transform(data_baru)
+            prediksi = knn_regressor.predict(scaled_data_baru)
+            st.success(f"Waktu layar diprediksi: {prediksi[0]:.2f} jam")

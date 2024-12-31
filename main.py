@@ -13,7 +13,7 @@ st.set_page_config(
 )
 
 # Path ke file data Anda
-file_path = '/content/drive/MyDrive/Data Tugas KA/Smartphone Usage and Behavioral Dataset - mobile_usage_behavioral_analysis.csv'
+file_path = 'Smartphone Usage and Behavioral Dataset - mobile_usage_behavioral_analysis.csv'
 
 # Membaca data
 data = pd.read_csv(file_path)

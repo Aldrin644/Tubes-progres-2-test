@@ -6,8 +6,14 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.neighbors import KNeighborsRegressor
 from sklearn.metrics import mean_squared_error, r2_score
 
+# Set page configuration first
+st.set_page_config(
+    page_title="Prediksi Waktu Layar Smartphone",
+    page_icon="📱",
+)
+
 # Path ke file data Anda
-file_path = 'Smartphone Usage and Behavioral Dataset - mobile_usage_behavioral_analysis.csv'
+file_path = '/content/drive/MyDrive/Data Tugas KA/Smartphone Usage and Behavioral Dataset - mobile_usage_behavioral_analysis.csv'
 
 # Membaca data
 data = pd.read_csv(file_path)
@@ -38,11 +44,6 @@ X_train = scaler.fit_transform(X_train)
 X_test = scaler.transform(X_test)
 
 # Halaman untuk pengaturan model dan prediksi
-st.set_page_config(
-    page_title="Prediksi Waktu Layar Smartphone",
-    page_icon="📱",
-)
-
 st.sidebar.title("Navigasi")
 page = st.sidebar.radio("Pilih Halaman", ["Beranda", "Training Model", "Prediksi Waktu Layar"])
 

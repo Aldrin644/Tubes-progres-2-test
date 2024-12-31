@@ -45,7 +45,7 @@ X_test = scaler.transform(X_test)
 
 # Halaman untuk pengaturan model dan prediksi
 st.sidebar.title("Navigasi")
-page = st.sidebar.radio("Pilih Halaman", ["Beranda", "Training Model", "Prediksi Waktu Layar"])
+page = st.sidebar.radio("Pilih Halaman", ["Beranda", "Training Model", "Prediksi Waktu Layar", "Visualisasi Model"])
 
 if page == "Beranda":
     st.title("Prediksi Waktu Layar Smartphone 📱")
@@ -120,3 +120,37 @@ elif page == "Prediksi Waktu Layar":
             scaled_data_baru = scaler.transform(data_baru)
             prediksi = knn_regressor.predict(scaled_data_baru)
             st.success(f"Waktu layar diprediksi: {prediksi[0]:.2f} jam")
+
+elif page == "Visualisasi Model":
+    st.title("Visualisasi Performansi Model 📊")
+
+    # Memastikan model dan scaler sudah tersedia
+    if 'knn_model' not in st.session_state:
+        st.error("Model belum dilatih. Silakan latih model terlebih dahulu.")
+    else:
+        knn_regressor = st.session_state.knn_model
+        scaler = st.session_state.scaler
+
+        # Memprediksi data uji
+        y_pred = knn_regressor.predict(X_test)
+
+        # Plot Residual (Error)
+        residuals = y_test - y_pred
+        fig, ax = plt.subplots(figsize=(10, 6))
+        ax.scatter(y_pred, residuals, color='blue', alpha=0.6)
+        ax.axhline(y=0, color='red', linestyle='--')
+        ax.set_title("Residual Plot")
+        ax.set_xlabel("Prediksi")
+        ax.set_ylabel("Residual (Error)")
+        ax.grid(True)
+        st.pyplot(fig)
+
+        # Visualisasi Prediksi vs Nilai Sebenarnya
+        fig2, ax2 = plt.subplots(figsize=(10, 6))
+        ax2.scatter(y_test, y_pred, alpha=0.6)
+        ax2.plot([min(y_test), max(y_test)], [min(y_test), max(y_test)], color="red", linestyle="--")
+        ax2.set_title("Prediksi vs Nilai Sebenarnya")
+        ax2.set_xlabel("Nilai Sebenarnya")
+        ax2.set_ylabel("Prediksi")
+        ax2.grid(True)
+        st.pyplot(fig2)

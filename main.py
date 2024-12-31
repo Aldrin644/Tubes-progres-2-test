@@ -45,7 +45,7 @@ X_test = scaler.transform(X_test)
 
 # Halaman untuk pengaturan model dan prediksi
 st.sidebar.title("Navigasi")
-page = st.sidebar.radio("Pilih Halaman", ["Beranda", "Training Model", "Prediksi Waktu Layar", "Visualisasi Model"])
+page = st.sidebar.radio("Pilih Halaman", ["Beranda", "Training Model", "Prediksi Waktu Layar", "Visualisasi Model", "Klasifikasi Pengguna"])
 
 if page == "Beranda":
     st.title("Prediksi Waktu Layar Smartphone 📱")
@@ -154,3 +154,14 @@ elif page == "Visualisasi Model":
         ax2.set_ylabel("Prediksi")
         ax2.grid(True)
         st.pyplot(fig2)
+
+elif page == "Klasifikasi Pengguna":
+    st.title("Klasifikasi Pengguna Smartphone 💬")
+
+    # Pengguna memberikan input total jam penggunaan
+    total_usage_input = st.number_input("Masukkan Total Jam Penggunaan Aplikasi per Hari (dalam jam)", 0, 24, 5)
+
+    if total_usage_input > 5:
+        st.write("Anda termasuk **pengguna smartphone berat**.")
+    else:
+        st.write("Anda termasuk **pengguna smartphone ringan**.")
